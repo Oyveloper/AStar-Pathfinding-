@@ -12,3 +12,5 @@ $ source env/bin/activate
 $ pip install -r requirements.txt
 $ python3 pathFinding.py 1
 ```
+
+The `pathFinding.py` script can be run with any number in the range [1, 4]
