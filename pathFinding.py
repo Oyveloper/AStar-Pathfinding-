@@ -1,11 +1,14 @@
 from maps import Map_Obj
 from searching import AStar, Node
 
+import sys
 
-samf_map = Map_Obj(task=4)
+args = sys.argv
+task = 1
+if len(args) > 1:
+    task = int(args[1])
 
-
-
+samf_map = Map_Obj(task=task)
 goal_node: Node = AStar(samf_map)
 
 
