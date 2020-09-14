@@ -5,3 +5,4 @@ AssignmentDescription.*
 *.tex
 *.pdf
 *.bbl
+.auctex-auto/
