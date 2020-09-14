@@ -1,13 +1,13 @@
 class Node(object):
     """Represents a single node in the search graph"""
-   
+
     def __init__(self, position: (int, int)):
         self.position = position
         self.cost = 0
         self.heuristic = 0
         self.previous = None
         self.children = []
-        
+
     def set_cost(self, cost: int):
         difference = self.cost - cost
         self.cost = cost
@@ -36,14 +36,31 @@ class Node(object):
     def get_position(self) -> (int, int):
         return self.position
 
-    def add_child(self, node: 'Node'): 
+    def add_child(self, node: 'Node'):
         self.children.append(node)
-    
+
+    # The following methods are implemented so I
+    # can use a priority queue for the frontier
     def __eq__(self, o: 'Node'):
         """Enables simple comparrison between two node objects
         This makes it possible to compare newly generated nodes
         to old ones, even though they aren't the same object in
         memory"""
-        return self.position == o.position
+        return self.get_expected_cost() == o.get_expected_cost()
+
+    def __lt__(self, o: 'Node'):
+        return self.get_expected_cost() < o.get_expected_cost()
+
+    def __le__(self, o: 'Node'):
+        return self.get_expected_cost() <= o.get_expected_cost()
+
+    def __ne__(self, o: 'Node'):
+        return self.get_expected_cost() != o.get_expected_cost()
+
+    def __gt__(self, o: 'Node'):
+        return self.get_expected_cost() > o.get_expected_cost()
+
+    def __ge__(self, o: 'Node'):
+        return self.get_expected_cost() >= o.get_expected_cost()
         
 

@@ -1,6 +1,8 @@
 from .Node import Node
 from maps import Map_Obj
-from .Frontier import Frontier
+
+import queue
+
 
 def AStar(map_obj: Map_Obj) -> Node:
     """
@@ -11,40 +13,44 @@ def AStar(map_obj: Map_Obj) -> Node:
     start_node = Node(map_obj.get_start_pos())
     end_position = map_obj.get_end_goal_pos()
 
-    frontier:Frontier = Frontier()
-    explored: [Node] = []
-    frontier.add_node(start_node)
+    frontier = queue.PriorityQueue()
+    explored: {str: Node} = {}
+    generated_nodes: {str: Node} = {}
+    frontier.put(start_node)
 
-    while not frontier.is_empty():
-        current_node: Node = frontier.get_next()
+    while not frontier.empty():
+        current_node: Node = frontier.get()
 
         if current_node.get_position() == tuple(end_position):
             # We have found the solution
             return current_node
 
         children: [Node] = expand(current_node, map_obj)
-        explored.append(current_node)
+        explored[key_for_node(current_node)] = current_node
 
         child: Node
         for child in children:
+            # If this node has been generated before, get the
+            # already generated one
+            if key_for_node(child) in generated_nodes:
+                child = generated_nodes[key_for_node(child)]
+            else: 
+                generated_nodes[key_for_node(child)] = child
 
-            # If this node has been generated before, get the already generated one
-            if frontier.contains_node(child):
-                child = frontier.get_node(child)
+            if key_for_node(child) not in explored:
+                current_node.add_child(child)
 
-
-            current_node.add_child(child)
-
-            cost_via_current_node = current_node.get_cost() + map_obj.get_cell_value((child.get_position()))
+            cost_via_current_node = (
+                current_node.get_cost() +
+                map_obj.get_cell_value((child.get_position()))
+            )
 
             if child.get_previous() is None or cost_via_current_node < child.get_cost():
-                    child.set_previous(current_node)
-                    child.set_cost(cost_via_current_node)
+                child.set_previous(current_node)
+                child.set_cost(cost_via_current_node)
 
-
-            
-            if not child in explored:
-                frontier.add_node(child)
+            if key_for_node(child) not in explored:
+                frontier.put(child)
 
     print(end_position)
 
@@ -66,11 +72,15 @@ def expand(node: Node, map_obj: Map_Obj) -> [Node]:
             if map_obj.get_cell_value(pos) != -1:
                 node.set_heuristic(heuristic(node, map_obj))
                 nodes.append(Node(pos))
-        except Exception as e:
+        except Exception:
             # Position outside map
             continue
 
     return nodes
+
+
+def key_for_node(node: Node) -> str:
+    return f"{node.position[0]},{node.position[1]}"
 
 
 def heuristic(node: Node, map_obj: Map_Obj) -> float:
