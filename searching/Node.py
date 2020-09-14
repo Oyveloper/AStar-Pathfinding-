@@ -1,5 +1,15 @@
 class Node(object):
-    """Represents a single node in the search graph"""
+    """
+    Represents a single node in the search graph
+
+    Properties:
+    - position: (x, y) coordinates
+    - cost: number giving the best cost yet found
+      of the path to this node
+    - Heuristic: the estimated distance to the goal
+    - previous: the current best parent
+    - children: all child nodes
+    """
 
     def __init__(self, position: (int, int)):
         self.position = position
@@ -25,6 +35,10 @@ class Node(object):
         self.heuristic = heuristic
 
     def get_expected_cost(self):
+        """This is the same as f(n) = h(n) + g(n)
+        from the definition of the A* algorithm
+        Gives an estimate of the total cost for a given node
+        """
         return self.cost + self.heuristic
 
     def set_previous(self, node: 'Node'):
@@ -41,6 +55,8 @@ class Node(object):
 
     # The following methods are implemented so I
     # can use a priority queue for the frontier
+    # These are comparison functions so you can compare
+    # two nodes based on their expected cost
     def __eq__(self, o: 'Node'):
         """Enables simple comparrison between two node objects
         This makes it possible to compare newly generated nodes
