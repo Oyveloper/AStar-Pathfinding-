@@ -1,2 +1,7 @@
 env/
 .DS_Store
+AssignmentDescription.*
+__pycache__/
+*.tex
+*.pdf
+*.bbl
